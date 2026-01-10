@@ -66,6 +66,7 @@ const expenseDataHardCoded = [
 ];
 
 const STORAGE_KEY = "Yuvraj.ExpenseData";
+const expenseForm = document.getElementById("addExpenseForm");
 
 function getExpenseData() {
   return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
@@ -135,5 +136,33 @@ function updateexpenseTable() {
   });
   table.appendChild(tbody);
 }
+
+// handle expense form submition
+
+expenseForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const expenseData = new FormData(expenseForm);
+  const expenseDataObject = Object.fromEntries(expenseData.entries());
+  expenseDataObject.id = crypto.randomUUID();
+
+  // handle empty date
+  if (!expenseDataObject.date) {
+    expenseDataObject.date =  new Date().toISOString().split("T")[0];
+  }
+  // format date value
+  const [y, m, d] = expenseDataObject.date.split("-");
+  expenseDataObject.date = m + "-" + d + "-" + y;
+  //handle empty description
+  if(!expenseDataObject.description){
+    expenseDataObject.description = '-';
+  }
+  //handle empty category
+  if(!expenseDataObject.category){
+    expenseDataObject.category = '-';
+  }
+
+  addExpense(expenseDataObject);
+  // console.log(expenseDataObject.date);
+});
 
 updateexpenseTable();
