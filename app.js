@@ -104,8 +104,7 @@ function updateexpenseTable() {
     return;
   }
 
-  // let i = 1;
-  expenseData.forEach((expense) => {
+  expenseData.forEach((expense, index) => {
     const row = document.createElement("tr");
     const srNo = document.createElement("td");
     const date = document.createElement("td");
@@ -114,7 +113,7 @@ function updateexpenseTable() {
     const category = document.createElement("td");
     const amount = document.createElement("td");
 
-    srNo.innerText = expense.id;
+    srNo.innerText = index + 1;
     date.innerText = expense.date;
     item.innerText = expense.item;
     description.innerText = expense.description;
