@@ -73,7 +73,8 @@ function getExpenseData() {
 
 function updateExpense(expenseData) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(expenseData));
-  updateexpenseTable();
+  // Reload the page to update the expense table in UI.
+  window.location.reload();
   console.log("Updated!");
 }
 
@@ -86,13 +87,23 @@ function addExpense(expenseObj) {
 
 function updateexpenseTable() {
   const expenseData = getExpenseData();
-//   if (expenseDa) {
-//     console.log("There are no expenses to display in table!");
-//     return;
-//   }
-  const table = document.getElementById('expenseTable');
+  const table = document.getElementById("expenseTable");
   const tbody = document.createElement("tbody");
-    // let i = 1;
+
+  // When expense table is empty
+  if (expenseData.length == 0) {
+    console.log("There are no expenses to display in table!");
+    const row = document.createElement("tr");
+    const noData = document.createElement("td");
+    noData.innerText = "No expenses recorded yet.";
+    noData.setAttribute("colspan", 6);
+    row.appendChild(noData);
+    tbody.appendChild(row);
+    table.appendChild(tbody);
+    return;
+  }
+
+  // let i = 1;
   expenseData.forEach((expense) => {
     const row = document.createElement("tr");
     const srNo = document.createElement("td");
@@ -121,8 +132,8 @@ function updateexpenseTable() {
     tbody.appendChild(row);
     row.appendChild(amount);
     tbody.appendChild(row);
-});
-table.appendChild(tbody);
+  });
+  table.appendChild(tbody);
 }
 
 updateexpenseTable();
