@@ -97,7 +97,7 @@ function updateexpenseTable() {
     const row = document.createElement("tr");
     const noData = document.createElement("td");
     noData.innerText = "No expenses recorded yet.";
-    noData.setAttribute("colspan", 6);
+    noData.setAttribute("colspan", 7);
     row.appendChild(noData);
     tbody.appendChild(row);
     table.appendChild(tbody);
@@ -112,6 +112,8 @@ function updateexpenseTable() {
     const description = document.createElement("td");
     const category = document.createElement("td");
     const amount = document.createElement("td");
+    const delete_row = document.createElement("td");
+    const delete_row_button = document.createElement("button");
 
     srNo.innerText = index + 1;
     date.innerText = expense.date;
@@ -119,6 +121,8 @@ function updateexpenseTable() {
     description.innerText = expense.description;
     category.innerText = expense.category;
     amount.innerText = expense.amount;
+    delete_row_button.setAttribute("onclick", `removeData('${expense.id}')`);
+    delete_row_button.innerHTML = 'x';
 
     row.appendChild(srNo);
     tbody.appendChild(row);
@@ -131,6 +135,9 @@ function updateexpenseTable() {
     row.appendChild(category);
     tbody.appendChild(row);
     row.appendChild(amount);
+    tbody.appendChild(row);
+    delete_row.appendChild(delete_row_button);
+    row.appendChild(delete_row);
     tbody.appendChild(row);
   });
   table.appendChild(tbody);
@@ -146,22 +153,28 @@ expenseForm.addEventListener("submit", (event) => {
 
   // handle empty date
   if (!expenseDataObject.date) {
-    expenseDataObject.date =  new Date().toISOString().split("T")[0];
+    expenseDataObject.date = new Date().toISOString().split("T")[0];
   }
   // format date value
   const [y, m, d] = expenseDataObject.date.split("-");
   expenseDataObject.date = m + "-" + d + "-" + y;
   //handle empty description
-  if(!expenseDataObject.description){
-    expenseDataObject.description = '-';
+  if (!expenseDataObject.description) {
+    expenseDataObject.description = "-";
   }
   //handle empty category
-  if(!expenseDataObject.category){
-    expenseDataObject.category = '-';
+  if (!expenseDataObject.category) {
+    expenseDataObject.category = "-";
   }
 
   addExpense(expenseDataObject);
   // console.log(expenseDataObject.date);
 });
+
+function removeData(id) {
+  const expenseData = getExpenseData();
+  const updatedData = expenseData.filter((expense) => expense.id != id);
+  updateExpense(updatedData);
+}
 
 updateexpenseTable();
