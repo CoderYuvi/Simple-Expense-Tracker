@@ -67,6 +67,11 @@ const expenseDataHardCoded = [
 
 const STORAGE_KEY = "Yuvraj.ExpenseData";
 const expenseForm = document.getElementById("addExpenseForm");
+const now = new Date();
+const currentMonth = now.getMonth() + 1; // Months are 0-indexed
+const currentYear = now.getFullYear();
+document.getElementById("summaryMonth").innerText = now.toLocaleString('default', { month: 'long' });
+document.getElementById("summaryTotal").innerText = "Rs. " + calculateMonthTotal(currentMonth, currentYear).toFixed(2);
 
 function getExpenseData() {
   return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
@@ -175,6 +180,18 @@ function removeData(id) {
   const expenseData = getExpenseData();
   const updatedData = expenseData.filter((expense) => expense.id != id);
   updateExpense(updatedData);
+}
+
+function calculateMonthTotal(month, year){
+  const expenseData = getExpenseData();
+  let total = 0;
+  expenseData.forEach((expense) => {
+    const [m, d, y] = expense.date.split("-");
+    if (parseInt(m) === month && parseInt(y) === year) {
+      total += parseFloat(expense.amount);
+    }
+  });
+  return total;
 }
 
 updateexpenseTable();
