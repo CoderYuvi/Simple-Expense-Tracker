@@ -127,7 +127,7 @@ function updateexpenseTable() {
     category.innerText = expense.category;
     amount.innerText = expense.amount;
     delete_row_button.setAttribute("onclick", `removeData('${expense.id}')`);
-    delete_row_button.innerHTML = 'x';
+    delete_row_button.innerHTML = "x";
 
     row.appendChild(srNo);
     tbody.appendChild(row);
@@ -148,8 +148,23 @@ function updateexpenseTable() {
   table.appendChild(tbody);
 }
 
-// handle expense form submition
+function updateMonthlySplit() {
+  const categoryTotals = calculateCategoryTotalsForMonth(currentMonth, currentYear);
+  if(Object.keys(categoryTotals).length === 0) return;
+  
+  const monthlySplitDiv = document.getElementById("monthlysplit");
+  const ul = document.createElement("ul");
 
+  for(const [categories, total] of Object.entries(categoryTotals)){
+    const li = document.createElement("li");
+    li.innerText = `${categories}: Rs. ${total.toFixed(2)}`;
+    ul.appendChild(li);
+  }
+  monthlySplitDiv.innerHTML = "";
+  monthlySplitDiv.appendChild(ul);
+}
+
+// handle expense form submition
 expenseForm.addEventListener("submit", (event) => {
   event.preventDefault();
   const expenseData = new FormData(expenseForm);
@@ -194,4 +209,28 @@ function calculateMonthTotal(month, year){
   return total;
 }
 
+function calculateCategoryTotalsForMonth(month, year) {
+  const expenseData = getExpenseData();
+  const categoryTotals = {};
+  expenseData.forEach((expense) => {
+    const [m, d, y] = expense.date.split("-");
+    if (parseInt(m) === month && parseInt(y) === year) {
+      const category = expense.category;
+      const amount = parseFloat(expense.amount);
+      if (categoryTotals[category]) {
+        categoryTotals[category] += amount;
+      } else {
+        categoryTotals[category] = amount;
+      }
+    }
+  });
+  //Updating categories with no name
+  if(categoryTotals['-']){
+    categoryTotals['Others'] = categoryTotals['-'];
+    delete categoryTotals['-'];
+  }
+  return categoryTotals;
+}
+
 updateexpenseTable();
+updateMonthlySplit();
